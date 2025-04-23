@@ -1,5 +1,6 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter} from 'react-router-dom';
 import Home from '../Home';
 
 test('Home displays name passed via router state', () => {
