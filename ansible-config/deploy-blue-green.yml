@@ -1,0 +1,73 @@
+---
+- name: Simulated Deployment Pipeline (Blue-Green)
+  hosts: localhost
+  become: true
+  vars:
+    repo_url: "https://github.com/gitHubMonster16/midtermdevops.git"
+    dest_dir: "/opt/midtermdevops"
+    blue_folder: "/opt/blue"
+    green_folder: "/opt/green"
+    active_folder: "/opt/blue"  # Initially, blue is active
+
+  tasks:
+    - name: Ensure the blue folder exists
+      ansible.builtin.file:
+        path: "{{ blue_folder }}"
+        state: directory
+
+    - name: Ensure the green folder exists
+      ansible.builtin.file:
+        path: "{{ green_folder }}"
+        state: directory
+
+    - name: Clone the repository into the blue folder
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ blue_folder }}"
+        version: "main"
+      when: active_folder == blue_folder
+
+    - name: Clone the repository into the green folder
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ green_folder }}"
+        version: "main"
+      when: active_folder == green_folder
+
+    - name: Install npm dependencies (Blue environment)
+      ansible.builtin.command:
+        argv:
+          - npm
+          - install
+        chdir: "{{ blue_folder }}"
+      when: active_folder == blue_folder
+
+    - name: Install npm dependencies (Green environment)
+      ansible.builtin.command:
+        argv:
+          - npm
+          - install
+        chdir: "{{ green_folder }}"
+      when: active_folder == green_folder
+
+    - name: Switch active folder to green (Blue-Green Deployment)
+      ansible.builtin.command:
+        argv:
+          - ln
+          - -sfn
+          - "{{ green_folder }}"
+          - "{{ dest_dir }}"
+      when: active_folder == blue_folder
+
+    - name: Switch active folder to blue (Rollback)
+      ansible.builtin.command:
+        argv:
+          - ln
+          - -sfn
+          - "{{ blue_folder }}"
+          - "{{ dest_dir }}"
+      when: active_folder == green_folder
+
+    - name: Verify the active folder (for demonstration purposes)
+      ansible.builtin.debug:
+        msg: "Currently active folder is {{ dest_dir }}"
