@@ -1,0 +1,80 @@
+- name: Install and deploy software
+  hosts: local
+  become: true
+  tasks:
+
+    - name: Ensure system is up to date
+      ansible.builtin.package:
+        name: '*'
+        state: latest
+
+    - name: Install curl (RedHat)
+      ansible.builtin.yum:
+        name: curl
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install git (RedHat)
+      ansible.builtin.yum:
+        name: git
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install curl (Debian)
+      ansible.builtin.apt:
+        name: curl
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install git (Debian)
+      ansible.builtin.apt:
+        name: git
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Check if Node.js is installed
+      ansible.builtin.shell: |
+        node -v || true
+      register: node_installed
+      changed_when: false
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Node.js and npm (Debian)
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nodejs
+        - npm
+      when:
+        - ansible_os_family == 'Debian'
+        - "'node' not in node_installed.stdout"
+
+    - name: Install PM2 globally
+      ansible.builtin.npm:
+        name: pm2
+        global: yes
+      when: ansible_os_family in ['Debian', 'RedHat']
+
+    - name: Clone repository
+      ansible.builtin.git:
+        repo: 'https://github.com/gitHubMonster16/midtermdevops.git'
+        dest: '/opt/midtermdevops'
+        version: 'main'
+
+    - name: Install npm dependencies
+      ansible.builtin.npm:
+        path: "/opt/midtermdevops"
+      when: ansible_os_family in ['Debian', 'RedHat']
+
+    - name: Start the app with PM2
+      ansible.builtin.command: >
+        pm2 start /opt/midtermdevops/app.js
+      args:
+        chdir: /opt/midtermdevops
+      when: ansible_os_family in ['Debian', 'RedHat']
+
+    - name: Ensure PM2 starts on boot
+      ansible.builtin.command: >
+        pm2 startup
+      when: ansible_os_family in ['Debian', 'RedHat']
