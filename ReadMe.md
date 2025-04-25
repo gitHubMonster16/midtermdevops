@@ -26,11 +26,9 @@ This project demonstrates the setup of a complete DevOps workflow for a React-ba
 
 ## 📸 Screenshots
 
-> 📂 Please add the following screenshots to a `screenshots/` folder and update the paths below.
+- `screenshots/ansible_dev.png` – Your terminal showing Ansible setup
+- `screenshots/Health_check_dev.png` – health check running
+- `screenshots/scrn1_dev.png` – Your app running in the browser
 
-- `screenshots/deployment.png` – Your terminal showing Ansible setup
-- `screenshots/pipeline.png` – GitHub Actions workflow run
-- `screenshots/app.png` – Your app running in the browser
 
-## 🧠 Workflow Diagram
 
