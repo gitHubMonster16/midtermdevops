@@ -1,0 +1,14 @@
+#!/bin/bash
+
+LOG_FILE="health_check.log"
+APP_URL="http://localhost:3000"
+
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" $APP_URL)
+
+if [ "$HTTP_CODE" -eq 200 ]; then
+    echo "$TIMESTAMP - App is running (HTTP $HTTP_CODE)" >> "$LOG_FILE"
+else
+    echo "$TIMESTAMP - App is NOT running (HTTP $HTTP_CODE)" >> "$LOG_FILE"
+fi
+

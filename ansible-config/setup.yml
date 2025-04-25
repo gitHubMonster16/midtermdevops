@@ -69,7 +69,7 @@
 
     - name: Start the app with PM2
       ansible.builtin.command: >
-        pm2 start /opt/midtermdevops/app.js
+        pm2 start /opt/midtermdevops/src/app.js
       args:
         chdir: /opt/midtermdevops
       when: ansible_os_family in ['Debian', 'RedHat']

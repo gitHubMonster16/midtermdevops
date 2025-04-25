@@ -24,5 +24,13 @@ This project demonstrates the setup of a complete DevOps workflow for a React-ba
 - **Health Check**:
     - A bash script (`health_check`) pings the app and logs the result to a file.
 
+## 📸 Screenshots
 
+> 📂 Please add the following screenshots to a `screenshots/` folder and update the paths below.
+
+- `screenshots/deployment.png` – Your terminal showing Ansible setup
+- `screenshots/pipeline.png` – GitHub Actions workflow run
+- `screenshots/app.png` – Your app running in the browser
+
+## 🧠 Workflow Diagram
 
